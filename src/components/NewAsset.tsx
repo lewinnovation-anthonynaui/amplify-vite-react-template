@@ -1,18 +1,35 @@
+import { generateClient } from 'aws-amplify/data';
 import { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { Schema } from '../../amplify/data/resource';
 import { Assets } from '../App';
-import Input from './Input';
-import Modal from './Modal';
+import { assetsActions } from '../store';
+import Input from './ui/Input';
+import Modal from './ui/Modal';
 
-interface Props {
-  onAdd: (asset: Assets) => void;
-  onCancel: () => void;
-}
+const client = generateClient<Schema>();
 
-export default function NewAsset({ onAdd, onCancel }: Props) {
+export default function NewAsset() {
   const modalRef = useRef<HTMLDialogElement>();
   const vehicleRef = useRef<HTMLInputElement>();
   const ownerRef = useRef<HTMLInputElement>();
+
+  const dispatch = useDispatch();
+
+  async function onAdd(assets: Assets) {
+    const { data } = await client.models.Assets.create(assets);
+    const newAssets = {
+      vehicle: data?.vehicle,
+      owner: data?.owner,
+      id: data?.id,
+    };
+    dispatch(assetsActions.handleAddAsset(newAssets));
+  }
+
+  function onCancel() {
+    dispatch(assetsActions.handleCancelAddAsset());
+  }
 
   function handleSave() {
     const enteredVehicle = vehicleRef.current?.value || '';
@@ -23,7 +40,10 @@ export default function NewAsset({ onAdd, onCancel }: Props) {
       return;
     }
 
-    onAdd({ vehicle: enteredVehicle, owner: enteredOwnerRef });
+    onAdd({
+      vehicle: enteredVehicle,
+      owner: enteredOwnerRef,
+    });
   }
 
   return (

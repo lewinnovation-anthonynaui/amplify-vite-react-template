@@ -1,11 +1,15 @@
+import { useDispatch } from 'react-redux';
+
 import asset from '../assets/asset.jpg';
-import Button from './Button';
+import { assetsActions } from '../store';
+import Button from './ui/Button';
 
-interface Props {
-  onStartAddAsset: () => void;
-}
+export default function NoAssetSelected() {
+  const dispatch = useDispatch();
 
-export default function NoAssetSelected({ onStartAddAsset }: Props) {
+  function onStartAddAsset() {
+    dispatch(assetsActions.handleStartAddAsset());
+  }
   return (
     <div className="mt-24 text-center w-2/3">
       <img

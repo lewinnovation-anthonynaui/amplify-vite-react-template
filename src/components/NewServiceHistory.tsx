@@ -1,20 +1,37 @@
+import { generateClient } from 'aws-amplify/data';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { ServiceHistory } from '../App';
+import { Schema } from '../../amplify/data/resource';
+import { AssetsState, ServiceHistory } from '../App';
+import { assetsActions } from '../store';
 
-interface Props {
-  onAdd: (serviceHistory: ServiceHistory) => void;
-}
+const client = generateClient<Schema>();
 
-export default function NewServiceHistory({ onAdd }: Props) {
+export default function NewServiceHistory() {
   const [serviceHistory, setServiceHistory] = useState<string>('');
+  const dispatch = useDispatch();
+  const assetsState = useSelector((state: AssetsState) => state.assets);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setServiceHistory(event.target.value);
   }
 
+  async function onAdd(serviceHistory: ServiceHistory) {
+    const { data } = await client.models.ServiceHistory.create(serviceHistory);
+    const newServiceHistory: ServiceHistory = {
+      service: data?.service || '',
+      id: data?.id || '',
+      assetId: data?.assetId || '',
+    };
+    dispatch(assetsActions.handleAddServiceHistory(newServiceHistory));
+  }
+
   function handleClick() {
-    onAdd({ service: serviceHistory });
+    onAdd({
+      service: serviceHistory,
+      assetId: assetsState.selectedAssetId!,
+    });
     setServiceHistory('');
   }
 
