@@ -1,19 +1,24 @@
-import { Assets } from '../App';
-import Button from './Button';
+import { useDispatch, useSelector } from 'react-redux';
 
-interface Props {
-  onStartAddAsset: () => void;
-  assets: Array<Assets>;
-  onSelectAsset: (assetId?: string) => void;
-  selectedAssetId: string;
-}
+import { AssetsState } from '../App';
+import { assetsActions } from '../store';
+import Button from './ui/Button';
 
-export default function AssetsSideBar({
-  onStartAddAsset,
-  assets,
-  onSelectAsset,
-  selectedAssetId,
-}: Props) {
+export default function AssetsSideBar() {
+  const dispatch = useDispatch();
+
+  const { assets, selectedAssetId } = useSelector(
+    (state: AssetsState) => state.assets
+  );
+
+  function onStartAddAsset() {
+    dispatch(assetsActions.handleStartAddAsset());
+  }
+
+  function onSelectAsset(assetId?: string) {
+    dispatch(assetsActions.handleSelectAsset(assetId));
+  }
+
   return (
     <aside className="w-1/3 px-8 py-16 bg-stone-900 text-stone-50 md:w-72 rounded-r-xl">
       <h2 className="mb-8 font-bold uppercase md:text-xl text-stone-200">
