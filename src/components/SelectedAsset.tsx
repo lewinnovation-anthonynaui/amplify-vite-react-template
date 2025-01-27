@@ -1,14 +1,12 @@
-import { Schema } from '../../amplify/data/resource';
+import { Assets, ServiceHistory } from '../App';
 import ServiceHistories from './ServiceHistories';
 
 interface Props {
-  asset: Partial<Schema['Assets']['type']>;
+  asset: Assets;
   onDelete: (assetId?: string) => void;
-  onAddServiceHistory: (
-    serviceHistory: Partial<Schema['ServiceHistory']['type']>
-  ) => void;
+  onAddServiceHistory: (serviceHistory: ServiceHistory) => void;
   onDeleteServiceHistory: (id?: string) => void;
-  serviceHistories: Array<Partial<Schema['ServiceHistory']['type']>>;
+  serviceHistories: Array<ServiceHistory>;
 }
 
 export default function SelectedAsset({

@@ -1,9 +1,9 @@
-import { Schema } from '../../amplify/data/resource';
+import { Assets } from '../App';
 import Button from './Button';
 
 interface Props {
   onStartAddAsset: () => void;
-  assets: Array<Partial<Schema['Assets']['type']>>;
+  assets: Array<Assets>;
   onSelectAsset: (assetId?: string) => void;
   selectedAssetId: string;
 }

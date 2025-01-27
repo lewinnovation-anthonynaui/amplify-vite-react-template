@@ -9,11 +9,23 @@ import SelectedAsset from './components/SelectedAsset';
 
 const client = generateClient<Schema>();
 
+export interface Assets {
+  id?: string;
+  vehicle: string;
+  owner: string;
+}
+
+export interface ServiceHistory {
+  id?: string;
+  assetId?: string;
+  service: string;
+}
+
 export default function App() {
   const [assetsState, setAssetsState] = useState<{
-    selectedAssetId: string | undefined | null;
-    assets: Array<Partial<Schema['Assets']['type']>>;
-    serviceHistories: Array<Partial<Schema['ServiceHistory']['type']>>;
+    selectedAssetId?: string | null;
+    assets: Array<Assets>;
+    serviceHistories: Array<ServiceHistory>;
   }>({
     selectedAssetId: undefined,
     assets: [],
@@ -24,9 +36,17 @@ export default function App() {
     client.models.Assets.observeQuery().subscribe({
       next: (data) => {
         setAssetsState((prevState) => {
+          const inDbAssets: Assets[] = data.items.map((item) => {
+            return {
+              vehicle: item.vehicle || '',
+              owner: item.owner || '',
+              id: item.id,
+            };
+          });
+          console.log('inDbAssets: ', inDbAssets);
           return {
             ...prevState,
-            assets: [...data.items],
+            assets: inDbAssets,
           };
         });
       },
@@ -35,9 +55,18 @@ export default function App() {
     client.models.ServiceHistory.observeQuery().subscribe({
       next: (data) => {
         setAssetsState((prevState) => {
+          const inDbServiceHistories: ServiceHistory[] = data.items.map(
+            (item) => {
+              return {
+                service: item.service || '',
+                assetId: item.assetId || '',
+                id: item.id,
+              };
+            }
+          );
           return {
             ...prevState,
-            serviceHistories: [...data.items],
+            serviceHistories: inDbServiceHistories,
           };
         });
       },
@@ -64,9 +93,14 @@ export default function App() {
     });
   }
 
-  function handleAddAsset(assetData) {
+  async function handleAddAsset(assetData) {
+    const asset = await client.models.Assets.create({
+      vehicle: assetData.vehicle,
+      owner: assetData.owner,
+    });
+
     setAssetsState((prevState) => {
-      const assetId = Math.random().toString();
+      const assetId = asset.data?.id;
       const newAsset = {
         ...assetData,
         id: assetId,
@@ -98,16 +132,17 @@ export default function App() {
     });
   }
 
-  function handleAddServiceHistory(
-    serviceHistory: Partial<Schema['ServiceHistory']['type']>
-  ) {
+  async function handleAddServiceHistory(serviceHistory: ServiceHistory) {
+    const serHistory = await client.models.ServiceHistory.create({
+      assetId: assetsState.selectedAssetId,
+      service: serviceHistory.service,
+    });
+    console.log('serHistory: ', serHistory);
     setAssetsState((prevState) => {
-      const newServiceHistory: Partial<Schema['ServiceHistory']['type']> = {
+      const newServiceHistory: ServiceHistory = {
         service: serviceHistory.service,
-        assetId: prevState.selectedAssetId,
-        id: '',
-        createdAt: '',
-        updatedAt: '',
+        assetId: prevState.selectedAssetId || undefined,
+        id: serviceHistory.id,
       };
       return {
         ...prevState,
@@ -140,12 +175,12 @@ export default function App() {
     (asset) => asset.id === assetsState.selectedAssetId
   );
 
-  if (!selectedAsset) return <div>bug !selectedAsset</div>;
+  // if (!selectedAsset) return <div>bug !selectedAsset</div>;
 
   if (assetsState.selectedAssetId)
     content = (
       <SelectedAsset
-        asset={selectedAsset}
+        asset={selectedAsset!}
         onDelete={handleDeleteAsset}
         onAddServiceHistory={handleAddServiceHistory}
         onDeleteServiceHistory={handleDeleteServiceHistory}
@@ -153,8 +188,8 @@ export default function App() {
       />
     );
 
-  if (!assetsState.selectedAssetId)
-    return <div>bug !assetsState.selectedAssetId</div>;
+  // if (!assetsState.selectedAssetId)
+  //   return <div>bug !assetsState.selectedAssetId</div>;
 
   return (
     <main className="h-screen my-8 flex gap-8">
@@ -162,7 +197,7 @@ export default function App() {
         onStartAddAsset={handleStartAddAsset}
         assets={assetsState.assets}
         onSelectAsset={handleSelectAsset}
-        selectedAssetId={assetsState.selectedAssetId}
+        selectedAssetId={assetsState.selectedAssetId || ''}
       />
       {content}
     </main>

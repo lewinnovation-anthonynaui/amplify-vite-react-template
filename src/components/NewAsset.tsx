@@ -1,11 +1,11 @@
 import { useRef } from 'react';
 
-import { Schema } from '../../amplify/data/resource';
+import { Assets } from '../App';
 import Input from './Input';
 import Modal from './Modal';
 
 interface Props {
-  onAdd: (asset: Partial<Schema['Assets']['type']>) => void;
+  onAdd: (asset: Assets) => void;
   onCancel: () => void;
 }
 

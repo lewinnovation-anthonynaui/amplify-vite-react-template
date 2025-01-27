@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { Schema } from '../../amplify/data/resource';
+import { ServiceHistory } from '../App';
 
 interface Props {
-  onAdd: (serviceHistory: Partial<Schema['ServiceHistory']['type']>) => void;
+  onAdd: (serviceHistory: ServiceHistory) => void;
 }
 
 export default function NewServiceHistory({ onAdd }: Props) {

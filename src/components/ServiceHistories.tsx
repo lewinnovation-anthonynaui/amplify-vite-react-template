@@ -1,10 +1,10 @@
-import { Schema } from '../../amplify/data/resource';
+import { ServiceHistory } from '../App';
 import NewServiceHistory from './NewServiceHistory';
 
 interface Props {
-  onAdd: (serviceHistory: Partial<Schema['ServiceHistory']['type']>) => void;
+  onAdd: (serviceHistory: ServiceHistory) => void;
   onDelete: (id?: string) => void;
-  serviceHistories: Array<Partial<Schema['ServiceHistory']['type']>>;
+  serviceHistories: Array<ServiceHistory>;
 }
 
 export default function ServiceHistories({
