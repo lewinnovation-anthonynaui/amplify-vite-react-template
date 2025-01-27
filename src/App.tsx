@@ -8,28 +8,13 @@ const client = generateClient<Schema>();
 
 function App() {
   // const { user, signOut } = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([]);
   const [assets, setAssets] = useState<Array<Schema['Assets']['type']>>([]);
-
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
 
   useEffect(() => {
     client.models.Assets.observeQuery().subscribe({
       next: (data) => setAssets([...data.items]),
     });
   }, []);
-
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt('Todo content') });
-  }
-
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
-  }
 
   function createAsset() {
     client.models.Assets.create({ vehicle: window.prompt('Asset vehicle') });

@@ -1,4 +1,4 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { a, ClientSchema, defineData } from '@aws-amplify/backend';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -7,15 +7,20 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
   Assets: a
     .model({
       vehicle: a.string(),
-      serviceHistory: a.string(),
+      owner: a.string(),
+      serviceHistory: a.hasMany('ServiceHistory', 'serviceHistoryId'),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+  ServiceHistory: a
+    .model({
+      asset: a.belongsTo('Assets', 'assetId'),
+      date: a.date(),
+      service: a.string(),
+      hours: a.float(),
+      km: a.float(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
