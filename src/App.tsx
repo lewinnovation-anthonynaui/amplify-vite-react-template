@@ -1,14 +1,6 @@
 import { generateClient } from 'aws-amplify/data';
 import { useEffect, useState } from 'react';
 
-import { Nullable } from '@aws-amplify/data-schema';
-import {
-  AuthMode,
-  CustomHeaders,
-  ListReturnValue,
-  SingularReturnValue,
-} from '@aws-amplify/data-schema/runtime';
-
 import { Schema } from '../amplify/data/resource';
 import AssetsSideBar from './components/AssetsSideBar';
 import NewAsset from './components/NewAsset';
@@ -148,7 +140,7 @@ export default function App() {
     (asset) => asset.id === assetsState.selectedAssetId
   );
 
-  // if (!selectedAsset) return <div>bug !selectedAsset</div>;
+  if (!selectedAsset) return <div>bug !selectedAsset</div>;
 
   if (assetsState.selectedAssetId)
     content = (
@@ -161,8 +153,8 @@ export default function App() {
       />
     );
 
-  // if (!assetsState.selectedAssetId)
-  //   return <div>bug !assetsState.selectedAssetId</div>;
+  if (!assetsState.selectedAssetId)
+    return <div>bug !assetsState.selectedAssetId</div>;
 
   return (
     <main className="h-screen my-8 flex gap-8">
