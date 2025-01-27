@@ -9,13 +9,15 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Assets: a
     .model({
+      // assetId: a.id(),
       vehicle: a.string(),
       owner: a.string(),
-      serviceHistory: a.hasMany('ServiceHistory', 'serviceHistoryId'),
+      serviceHistory: a.hasMany('ServiceHistory', 'assetId'),
     })
     .authorization((allow) => [allow.publicApiKey()]),
   ServiceHistory: a
     .model({
+      assetId: a.id(),
       asset: a.belongsTo('Assets', 'assetId'),
       date: a.date(),
       service: a.string(),
