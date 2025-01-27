@@ -8,7 +8,6 @@ import ReactDOM from 'react-dom/client';
 // import { Authenticator } from '@aws-amplify/ui-react';
 import outputs from '../amplify_outputs.json';
 import App from './App.tsx';
-import AssetsSideBar from './components/AssetsSideBar.tsx';
 
 Amplify.configure(outputs);
 
@@ -17,8 +16,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     {/* <Authenticator> */}
     {/* <App /> */}
     {/* </Authenticator> */}
-    <main className="h-screen my-8">
-      <AssetsSideBar />
-    </main>
+    <App />
   </React.StrictMode>
 );
